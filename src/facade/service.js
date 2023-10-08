@@ -1,7 +1,7 @@
 const dbo = require("../dbo/base")
 const { messages } = require("joi-translation-pt-br")
-const validation = require("../model/client")
-const tableName = "client"
+const validation = require("../model/service")
+const tableName = "service"
 
 const get = async (object) => {
   const { limit, page } = object
@@ -9,11 +9,7 @@ const get = async (object) => {
   const filters = {
     id: { column: "id", operator: "=" },
     name: { column: "name", operator: "like" },
-    phone: { column: "phone", operator: "like" },
-    cpf: { column: "cpf", operator: "like" },
-    zipCode: { column: "zip_code", operator: "like" },
-    city: { column: "city", operator: "like" },
-    state: { column: "state", operator: "like" },
+    price: { column: "price", operator: "like" },
   }
 
   for (const key in filters) {
@@ -41,7 +37,7 @@ const insert = async (object) => {
     const errors = error.details.map((el) => el.message)
     return { errors }
   }
-  return await dbo.insertOrUpdateClient(object, tableName)
+  return await dbo.insert(object, tableName)
 }
 
 const update = async (object, id) => {
