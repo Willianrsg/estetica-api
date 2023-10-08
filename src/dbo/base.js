@@ -135,6 +135,25 @@ const validateAcl = async (idUser, path) => {
   return result
 }
 
+const insertOrUpdateClient = async (object, tableName) => {
+  try {
+    await db(tableName).insert(object)
+    return { success: true }
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY' && err.message.includes('client_cpf_unique')) {
+      await db(tableName)
+        .where('cpf', object.cpf)
+        .update({
+          ...object,
+          deleted_at: null,
+        })
+      return { success: true, action: 'updated' }
+    } else {
+      return { errors: err.message }
+    }
+  }
+}
+
 module.exports = {
   get,
   getById,
@@ -143,5 +162,6 @@ module.exports = {
   remove,
   login,
   getPendingImporter,
-  validateAcl
+  validateAcl,
+  insertOrUpdateClient
 }

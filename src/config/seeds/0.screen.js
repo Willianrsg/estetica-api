@@ -34,6 +34,31 @@ exports.seed = async function (knex) {
       name: 'Me',
       route: '/me',
       order: 7
-    }
+    },
+    {
+      name: 'Clientes',
+      route: '/client',
+      order: 8
+    },
+    {
+      name: 'Veiculos',
+      route: '/vehicles',
+      order: 9
+    },
+    {
+      name: 'Serviços',
+      route: '/service',
+      order: 10
+    },
+    {
+      name: 'Estoque',
+      route: '/stock',
+      order: 11
+    },
+    {
+      name: 'Agenda',
+      route: '/scheduling',
+      order: 12
+    },
   ])
 }
