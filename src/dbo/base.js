@@ -154,6 +154,25 @@ const insertOrUpdateClient = async (object, tableName) => {
   }
 }
 
+const insertOrUpdateVehicle = async (object, tableName) => {
+  try {
+    await db(tableName).insert(object)
+    return { success: true }
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY' && err.message.includes('vehicles_license_plate_unique')) {
+      await db(tableName)
+        .where('license_plate', object.licensePlate)
+        .update({
+          ...object,
+          deleted_at: null,
+        })
+      return { success: true, action: 'updated' }
+    } else {
+      return { errors: err.message }
+    }
+  }
+}
+
 module.exports = {
   get,
   getById,
@@ -163,5 +182,6 @@ module.exports = {
   login,
   getPendingImporter,
   validateAcl,
-  insertOrUpdateClient
+  insertOrUpdateClient,
+  insertOrUpdateVehicle
 }
