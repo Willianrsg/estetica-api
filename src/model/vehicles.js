@@ -1,7 +1,7 @@
 const Joi = require('joi')
 
 const object = Joi.object().keys({
-    idClient: Joi.string().required().label('Cliente'),
+    idClient: Joi.number().required().label('Cliente'),
     manufacturer: Joi.string().allow(null).label('Fabricante'),
     model: Joi.string().required().label('modelo'),
     licensePlate: Joi.string().required().label('Placa'),
