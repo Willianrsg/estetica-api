@@ -14,7 +14,7 @@ exports.up = function (knex) {
         table.integer("id_vehicles").unsigned().notNullable()
         table.foreign("id_vehicles").references("vehicles.id")      
         table.integer("id_service").unsigned().notNullable()
-        table.foreign("id_service").references("client.id")      
+        table.foreign("id_service").references("service.id")      
   
         table.timestamps(true, true)
         table.datetime("deleted_at").defaultTo(null)
