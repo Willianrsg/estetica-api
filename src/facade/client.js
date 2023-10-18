@@ -1,6 +1,7 @@
 const dbo = require("../dbo/base")
 const { messages } = require("joi-translation-pt-br")
 const validation = require("../model/client")
+const validator = require('../rule/cpfCnpj')
 const tableName = "client"
 
 const get = async (object) => {
@@ -41,6 +42,28 @@ const insert = async (object) => {
     const errors = error.details.map((el) => el.message)
     return { errors }
   }
+
+  if(object.cpfCnpj.length === 14){
+    console.log('cAI NO CPF');
+    console.log(object.cpfCnpj.length);
+    cpf = await validator.validateCPF(object.cpfCnpj)
+    if (cpf === false) {
+      return { errors: 'CPF Invalido' }
+    }
+  } else {
+    console.log('cAI NO CNPJ');
+    console.log(object.cpfCnpj.length);
+    cnpj = await validator.validateCNPJ(object.cpfCnpj)
+    if (cnpj === false) {
+      return { errors: 'CNPJ Invalido' }
+    }
+  }
+
+
+
+
+
+
   return await dbo.insertOrUpdateClient(object, tableName)
 }
 
