@@ -39,12 +39,11 @@ const validateCNPJ = async cnpj => {
     // Remove caracteres não numéricos
     cnpj = cnpj.replace(/[^\d]+/g, '');
   
-    // Verifica se o CNPJ tem 14 dígitos
+    
     if (cnpj.length !== 14) {
       return false;
     }
   
-    // Verifica se o CNPJ não é uma sequência de dígitos repetidos
     if (
       cnpj === '00000000000000' ||
       cnpj === '11111111111111' ||
@@ -59,8 +58,7 @@ const validateCNPJ = async cnpj => {
     ) {
       return false;
     }
-  
-    // Calcula os dígitos verificadores
+
     let tamanho = cnpj.length - 2;
     let numeros = cnpj.substring(0, tamanho);
     let digitos = cnpj.substring(tamanho);
