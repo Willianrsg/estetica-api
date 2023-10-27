@@ -37,6 +37,54 @@ const get = async (tableName, limit = 10, page = 1, params) => {
   }
 }
 
+const getData = async (tableName, limit = 10, page = 1, params) => {
+  const offset = (page - 1) * limit
+
+  const baseQuery =
+  params && params.column && params.value
+    ? db(tableName)
+        .where(`${tableName}.deleted_at`, null)
+        .where('service.deleted_at', null)
+        .where('client.deleted_at', null)
+        .where('vehicles.deleted_at', null)
+        .where(`${tableName}.${params.column}`, params.operator, params.value)
+    : db(tableName).where(`${tableName}.deleted_at`, null)
+      .where('service.deleted_at', null)
+      .where('client.deleted_at', null)
+      .where('vehicles.deleted_at', null)
+
+
+  const result = await baseQuery
+    .clone()
+    .select('schedule.*', 'service.name as serviceName', 'client.name as clientName', 'vehicles.model as vehiclesModel')
+    .leftJoin('service', 'schedule.idService', 'service.id')
+    .leftJoin('client', 'schedule.idClient', 'client.id')
+    .leftJoin('vehicles', 'schedule.idVehicles', 'vehicles.id')
+    .limit(limit)
+    .offset(offset)
+    .catch(error => {
+      console.log(error.message)
+      return []
+    })
+
+  const count = await baseQuery
+    .clone()
+    .count('schedule.id as quantity')
+    .leftJoin('service', 'schedule.idService', 'service.id')
+    .leftJoin('client', 'schedule.idClient', 'client.id')
+    .leftJoin('vehicles', 'schedule.idVehicles', 'vehicles.id')
+    .first()
+    .catch(error => {
+      console.log(error.message)
+      return []
+    })
+  return {
+    data: result,
+    actualPage: page,
+    total: count.quantity
+  }
+}
+
 const getById = async (id, tableName) => {
   const result = await db(tableName)
     .select()
@@ -183,5 +231,6 @@ module.exports = {
   getPendingImporter,
   validateAcl,
   insertOrUpdateClient,
-  insertOrUpdateVehicle
+  insertOrUpdateVehicle,
+  getData
 }

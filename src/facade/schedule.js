@@ -19,7 +19,8 @@ const get = async (object) => {
     if (object[key]) {
       const { column, operator } = filters[key]
       const paramValue = operator === "like" ? `%${object[key]}%` : object[key]
-      return await dbo.get(tableName, limit, page, {
+      // return await dbo.get(tableName, limit, page, {
+      return await dbo.getData(tableName, limit, page, {
         column,
         value: paramValue,
         operator,
@@ -27,7 +28,7 @@ const get = async (object) => {
     }
   }
 
-  return await dbo.get(tableName, limit, page)
+  return await dbo.getData(tableName, limit, page)
 }
 
 const insert = async (object) => {
