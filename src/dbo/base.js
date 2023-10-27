@@ -84,6 +84,45 @@ const getData = async (tableName, limit = 10, page = 1, params) => {
     total: count.quantity
   }
 }
+const getProdName = async (tableName, limit = 10, page = 1, params) => {
+  const offset = (page - 1) * limit
+
+  const baseQuery =
+  params && params.column && params.value
+    ? db(tableName)
+        .where(`${tableName}.deleted_at`, null)
+        .where('stock.deleted_at', null)
+        .where(`${tableName}.${params.column}`, params.operator, params.value)
+    : db(tableName).where(`${tableName}.deleted_at`, null)
+      .where('stock.deleted_at', null)
+
+
+  const result = await baseQuery
+    .clone()
+    .select('serviceProduct.*', 'stock.product as productName')
+    .leftJoin('stock', 'serviceProduct.idProduct', 'stock.id')
+    .limit(limit)
+    .offset(offset)
+    .catch(error => {
+      console.log(error.message)
+      return []
+    })
+
+  const count = await baseQuery
+    .clone()
+    .count('serviceProduct.id as quantity')
+    .leftJoin('stock', 'serviceProduct.idProduct', 'stock.id')
+    .first()
+    .catch(error => {
+      console.log(error.message)
+      return []
+    })
+  return {
+    data: result,
+    actualPage: page,
+    total: count.quantity
+  }
+}
 
 const getById = async (id, tableName) => {
   const result = await db(tableName)
@@ -232,5 +271,6 @@ module.exports = {
   validateAcl,
   insertOrUpdateClient,
   insertOrUpdateVehicle,
-  getData
+  getData,
+  getProdName
 }
